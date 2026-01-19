@@ -27,7 +27,7 @@
     "@tailwindcss/typography": "0.5.19",
     "browserify-fs": "^1.0.0",
     "classnames": "2.5.1",
-    "daisyui": "4.12.24",
+    "daisyui": "5.5.14",
     "json-rpc-2.0": "^1.6.0",
     "minimatch": "^10.1.1",
     "next": "12.1.6",
@@ -44,6 +44,7 @@
     "webpack": "^5.104.1"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "25.0.9",
     "@types/react": "^18.0.28",
     "autoprefixer": "10.4.23",
@@ -56,12 +57,13 @@
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
     "postcss": "8.5.6",
+    "postcss-import": "^16.1.1",
     "postcss-nesting": "^14.0.0",
     "prettier": "3.8.0",
     "prettier-plugin-tailwindcss": "0.7.2",
     "raw-loader": "^4.0.2",
     "rimraf": "^6.0.1",
-    "tailwindcss": "3.1.2",
+    "tailwindcss": "4.1.18",
     "typescript": "5.9.3"
   }
 }
