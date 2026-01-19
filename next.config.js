@@ -1,11 +1,14 @@
 /** @type {import('next').NextConfig} */
 
 const webpack = require('webpack');
-const withPWA = require('next-pwa');
-const runtimeCaching = require('next-pwa/cache');
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  runtimeCaching: require('next-pwa/cache'),
+});
 require('dotenv').config();
 
-module.exports = withPWA({
+const nextConfig = {
   env: {
     URL: process.env.URL,
     TWITTER: process.env.TWITTER,
@@ -13,11 +16,6 @@ module.exports = withPWA({
     RPC_URL: process.env.RPC_URL,
   },
   reactStrictMode: true,
-  pwa: {
-    dest: 'public',
-    disable: process.env.NODE_ENV === 'development',
-    runtimeCaching,
-  },
   ...(process.env.NODE_ENV === 'production' && {
     typescript: {
       ignoreBuildErrors: true,
@@ -58,17 +56,16 @@ module.exports = withPWA({
     patchWasmModuleImport(config, options.isServer);
 
     // In next.config.js, inside your webpack function:
-  config.module.rules.push({
-    test: /\.wasm$/,
-    include: /node_modules[\\/]@demox-labs[\\/]aleo-sdk-web/,
-    type: 'javascript/auto',
-    loader: 'file-loader',
-  });
-
+    config.module.rules.push({
+      test: /\.wasm$/,
+      include: /node_modules[\\/]@demox-labs[\\/]aleo-sdk-web/,
+      type: 'javascript/auto',
+      loader: 'file-loader',
+    });
 
     return config;
   },
-});
+};
 
 function patchWasmModuleImport(config, isServer) {
   config.experiments = Object.assign(config.experiments || {}, {
@@ -89,3 +86,5 @@ function patchWasmModuleImport(config, isServer) {
       config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm';
   }
 }
+
+module.exports = withPWA(nextConfig);
