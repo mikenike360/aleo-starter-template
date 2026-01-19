@@ -17,7 +17,7 @@ import {
 } from '@demox-labs/aleo-wallet-adapter-base';
 
 // Import global styles and wallet modal styles
-import 'swiper/css';
+import 'swiper/swiper-bundle.css';
 
 import '@/assets/css/globals.css';
 
