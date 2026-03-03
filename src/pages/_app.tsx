@@ -1,36 +1,22 @@
-// _app.tsx
 import type { AppProps } from 'next/app';
 import type { NextPageWithLayout } from '@/types';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Head from 'next/head';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ThemeProvider } from 'next-themes';
 
-// Import Aleo Wallet Adapter dependencies
-import { WalletProvider } from '@demox-labs/aleo-wallet-adapter-react';
-import { WalletModalProvider } from '@demox-labs/aleo-wallet-adapter-reactui';
-import { LeoWalletAdapter } from '@demox-labs/aleo-wallet-adapter-leo';
-import {
-  DecryptPermission,
-  WalletAdapterNetwork,
-} from '@demox-labs/aleo-wallet-adapter-base';
+import { Network } from '@provablehq/aleo-types';
+import { AleoWalletProvider } from '@provablehq/aleo-wallet-adaptor-react';
+import { WalletModalProvider } from '@provablehq/aleo-wallet-adaptor-react-ui';
+import { LeoWalletAdapter } from '@provablehq/aleo-wallet-adaptor-leo';
+import { ShieldWalletAdapter } from '@provablehq/aleo-wallet-adaptor-shield';
+import { DecryptPermission } from '@provablehq/aleo-wallet-adaptor-core';
 
 // Import global styles and wallet modal styles
 import 'swiper/swiper-bundle.css';
-
 import '@/assets/css/globals.css';
-
-import '@demox-labs/aleo-wallet-adapter-reactui/styles.css';
-
-import { CURRENT_NETWORK, CURRENT_RPC_URL } from '@/types';
-
-// Initialize the wallet adapters outside the component
-const wallets = [
-  new LeoWalletAdapter({
-    appName: 'zKontract',
-  }),
-];
+import '@provablehq/aleo-wallet-adaptor-react-ui/dist/styles.css';
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
@@ -38,7 +24,19 @@ type AppPropsWithLayout = AppProps & {
 
 function CustomApp({ Component, pageProps }: AppPropsWithLayout) {
   const [queryClient] = useState(() => new QueryClient());
-  const getLayout = Component.getLayout ?? ((page) => page);
+  const getLayout = Component.getLayout ?? ((page: any) => page);
+
+  const wallets = useMemo(
+    () => [
+      new LeoWalletAdapter({
+        appName: 'Aleo Starter Template',
+      }),
+      new ShieldWalletAdapter({ 
+        appName: 'Aleo Starter Template',
+      }),
+    ],
+    []
+  );
 
   return (
     <>
@@ -47,19 +45,18 @@ function CustomApp({ Component, pageProps }: AppPropsWithLayout) {
       </Head>
       <QueryClientProvider client={queryClient}>
         <Hydrate state={pageProps.dehydratedState}>
-          <WalletProvider
+          <AleoWalletProvider
             wallets={wallets}
             decryptPermission={DecryptPermission.UponRequest}
-            network={WalletAdapterNetwork.TestnetBeta}
+            network={Network.TESTNET}
             autoConnect
-            
           >
             <WalletModalProvider>
               <ThemeProvider attribute="data-theme" enableSystem={true} defaultTheme="dark">
                 {getLayout(<Component {...pageProps} />)}
               </ThemeProvider>
             </WalletModalProvider>
-          </WalletProvider>
+          </AleoWalletProvider>
         </Hydrate>
         <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
       </QueryClientProvider>

@@ -5,10 +5,10 @@ import { useWindowScroll } from '@/hooks/use-window-scroll';
 import { useIsMounted } from '@/hooks/use-is-mounted';
 
 
-import React, { FC, useMemo } from 'react';
-import { WalletMultiButton } from '@demox-labs/aleo-wallet-adapter-reactui';
+import React from 'react';
+import { WalletMultiButton } from '@provablehq/aleo-wallet-adaptor-react-ui';
 
-require('@demox-labs/aleo-wallet-adapter-reactui/dist/styles.css');
+require('@provablehq/aleo-wallet-adaptor-react-ui/dist/styles.css');
 
 function HeaderRightArea() {
   return (
@@ -22,7 +22,6 @@ export function Header() {
   
   const isMounted = useIsMounted();
   let windowScroll = useWindowScroll();
-  let [isOpen, setIsOpen] = useState(false);
 
   return (
     <nav

@@ -1,9 +1,9 @@
 import type { NextPage } from 'next';
 import type { ReactElement, ReactNode } from 'react';
-import { WalletAdapterNetwork } from '@demox-labs/aleo-wallet-adapter-base';
+import { Network } from '@provablehq/aleo-types'; 
 
-//Change to MainnetBeta for mainnet or TestnetBeta for testnet
-export const CURRENT_NETWORK: WalletAdapterNetwork = WalletAdapterNetwork.TestnetBeta;
+//Change to MAINNET for mainnet or CANARY for canary
+export const CURRENT_NETWORK: Network = Network.TESTNET;
 
 
 //TESTNET_RPC_URL=https://testnetbeta.aleorpc.com
@@ -15,7 +15,6 @@ export type NextPageWithLayout<P = {}> = NextPage<P> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
 
-// src/types/index.ts
 export type ProposalData = {
   bountyId: number;
   proposalId: number;
