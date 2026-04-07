@@ -1,14 +1,14 @@
 import { useWindowScroll } from '@/hooks/use-window-scroll';
 import { useIsMounted } from '@/hooks/use-is-mounted';
 import React, { useState, useEffect } from 'react';
-import { WalletMultiButton } from '@demox-labs/aleo-wallet-adapter-reactui';
+import { WalletMultiButton } from '@provablehq/aleo-wallet-adaptor-react-ui';
 import { HomeIcon } from '@/components/icons/home';
 import { Twitter } from '@/components/icons/twitter';
 import { Discord } from '@/components/icons/discord';
 import { useTheme } from 'next-themes';
 import Footer from '@/components/ui/Footer';
 
-require('@demox-labs/aleo-wallet-adapter-reactui/dist/styles.css');
+require('@provablehq/aleo-wallet-adaptor-react-ui/dist/styles.css');
 
 // Define the list of DaisyUI themes you want to offer
 const themes = [

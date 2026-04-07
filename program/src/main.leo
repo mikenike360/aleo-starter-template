@@ -1,5 +1,7 @@
 
-program zkontractv5.aleo {
+program zkontractvtest.aleo {
+    @noupgrade
+    async constructor() {}
 
     const contract_owner: address = aleo1xh0ncflwkfzga983lwujsha729c8nwu7phfn8aw7h3gahhj0ms8qytrxec;
 

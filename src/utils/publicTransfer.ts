@@ -1,30 +1,24 @@
-// publicTransfer.ts
-import { Transaction, WalletAdapterNetwork } from '@demox-labs/aleo-wallet-adapter-base';
-import { LeoWalletAdapter } from '@demox-labs/aleo-wallet-adapter-leo';
-import { CURRENT_NETWORK } from '@/types';
+import { TransactionOptions } from '@provablehq/aleo-types';
+import { getFeeForFunction } from '@/utils/feeCalculator';
 
 export const CREDITS_PROGRAM_ID = 'credits.aleo';
 export const TRANSFER_PUBLIC_FUNCTION = 'transfer_public';
-
-// Import the fee calculator function
-import { getFeeForFunction } from '@/utils/feeCalculator';
 
 /**
  * Executes a public transfer of credits to a target address,
  * then updates the reward state via the API.
  *
- * @param wallet - The wallet adapter instance.
+ * @param wallet - The wallet adapter instance (can be LeoWalletAdapter or ShieldWalletAdapter).
  * @param publicKey - The public key of the user performing the transfer.
  * @param proposerAddress - The address to receive the public transfer.
  * @param bountyReward - The reward amount (in microcredits) to be transferred.
  * @param setTxStatus - Function to update the transaction status in the UI.
  * @param bountyId - The bounty ID.
  * @param proposalId - The proposal ID.
-
  * @returns The transaction ID of the submitted public transfer.
  */
 export async function publicTransfer(
-  wallet: LeoWalletAdapter,
+  wallet: any,
   publicKey: string,
   proposerAddress: string,
   bountyReward: number,
@@ -40,29 +34,27 @@ export async function publicTransfer(
   // 1. Create the transaction input
   const transferInput = [proposerAddress, rewardAmountforTransfer];
   
-
   const fee = getFeeForFunction(TRANSFER_PUBLIC_FUNCTION);
   console.log('Calculated fee (in micro credits):', fee);
 
-  // 2. Build the transaction
-  const transTx = Transaction.createTransaction(
-    publicKey,
-    CURRENT_NETWORK,
-    CREDITS_PROGRAM_ID,
-    TRANSFER_PUBLIC_FUNCTION,
-    transferInput,
-    fee,
-    true
-  );
+  const transaction: TransactionOptions = {
+    program: CREDITS_PROGRAM_ID,
+    function: TRANSFER_PUBLIC_FUNCTION,
+    inputs: transferInput as string[],
+    fee: fee,
+  };
 
-  // 3. Send the transaction
-  const txId = await wallet.requestTransaction(transTx);
+  const result = await wallet.executeTransaction(transaction);
+  const txId = result.transactionId || result;
+  
   setTxStatus(`Public transfer submitted: ${txId}`);
 
-  // 4. Poll for finalization
+  // 2. Poll for finalization
   let finalized = false;
   for (let attempt = 0; attempt < 60; attempt++) {
-    const status = await wallet.transactionStatus(txId);
+    const statusResponse = await wallet.transactionStatus(txId);
+    const status = String(statusResponse); 
+
     if (status === 'Finalized') {
       finalized = true;
       break;
@@ -76,7 +68,7 @@ export async function publicTransfer(
 
   setTxStatus('Public transfer finalized.');
 
-  // 5. Call the API route to update the reward status
+  // 3. Call the API route to update the reward status
   const rewardResponse = await fetch('/api/update-proposal-reward', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
@@ -91,5 +83,6 @@ export async function publicTransfer(
     throw new Error('Failed to update reward status.');
   }
   setTxStatus('Reward status updated.');
+  
   return txId;
 }

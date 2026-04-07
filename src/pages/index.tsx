@@ -2,21 +2,20 @@ import type { NextPageWithLayout } from '@/types';
 import { NextSeo } from 'next-seo';
 import Layout from '@/layouts/_layout';
 import Button from '@/components/ui/button';
-import { useWallet } from '@demox-labs/aleo-wallet-adapter-react';
-import { WalletNotConnectedError } from '@demox-labs/aleo-wallet-adapter-base';
+import { useWallet } from '@provablehq/aleo-wallet-adaptor-react';
+import { WalletNotConnectedError } from '@provablehq/aleo-wallet-adaptor-core';
 import { useRouter } from 'next/router';
-import dynamic from 'next/dynamic';
 
 // Uncomment this line to enable the animated background ✨
 // const GLSLBackground = dynamic(() => import('../utils/GLSLBackground'), { ssr: false });
 
 const MainPage: NextPageWithLayout = () => {
-  const { publicKey } = useWallet();
+  const { address } = useWallet();
   const router = useRouter();
 
   const handleButtonClick = async () => {
     try {
-      if (!publicKey) {
+      if (!address) {
         throw new WalletNotConnectedError();
       }
       router.push('/dashboard'); // Change to your target route
@@ -48,7 +47,7 @@ const MainPage: NextPageWithLayout = () => {
             onClick={handleButtonClick}
             className="btn btn-primary px-6 py-3 text-lg font-semibold"
           >
-            {publicKey ? 'Enter App' : 'Connect Wallet'}
+            {address ? 'Enter App' : 'Connect Wallet'}
           </Button>
         </div>
       </div>
